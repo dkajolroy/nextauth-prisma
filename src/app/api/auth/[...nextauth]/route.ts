@@ -1,8 +1,8 @@
+import prisma from "@/app/lib/prisma";
 import { PrismaAdapter } from "@next-auth/prisma-adapter";
-import { PrismaClient } from "@prisma/client";
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-const prisma = new PrismaClient();
+import GoogleProvider from "next-auth/providers/google";
 
 const handler = NextAuth({
   adapter: PrismaAdapter(prisma),
@@ -22,11 +22,19 @@ const handler = NextAuth({
         return user;
       },
     }),
+
+    GoogleProvider({
+      //   profile(profile, tokens) {
+      //     console.log("Your G Profile: " + profile);
+      //     return profile;
+      //   },
+      clientId: process.env.GOOGLE_CLIENT_ID as string,
+      clientSecret: process.env.GOOGLE_CLIENT_SECRET as string,
+    }),
   ],
-  secret: process.env.SECRET_KEY,
+  secret: process.env.NEXTAUTH_SECRET,
   session: { strategy: "jwt" },
-  theme: { colorScheme: "light" },
-  // pages: { signIn: "/auth", newUser: "/auth", signOut: "/" ,},
+  //   pages: { signIn: "/auth", newUser: "/auth", signOut: "/auth" },
   debug: process.env.NODE_ENV !== "production",
 });
 
